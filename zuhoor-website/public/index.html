@@ -11,9 +11,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
 
-  <!-- Main CSS -->
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/style.css?v=2">
+  <!-- Font Awesome (Brand + Solid Icons) -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha512-xh6O8k5Q5e0siJmq9Vc3rroWAtxEvsC0BpvyEukgqS0bkkCm1cW0XkyRjO6jwxKF1u9IiMaivGi99Z+eK6Ff8g=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
+
+  <!-- Main CSS (نسخة واحدة فقط مع كاش بستر) -->
+  <link rel="stylesheet" href="css/style.css?v=3" />
 </head>
 
 <script>
@@ -57,17 +63,31 @@
   </header>
 
   <!-- Floating Social (vertical) -->
-  <aside class="social-float" aria-label="أزرار التواصل">
-    <a class="soc soc-wa" id="waBtn" target="_blank" rel="noopener" aria-label="WhatsApp">
-      <span>WA</span>
-    </a>
-    <a class="soc soc-fb" id="fbBtn" target="_blank" rel="noopener" aria-label="Facebook">
-      <span>f</span>
-    </a>
-    <a class="soc soc-ig" id="igBtn" target="_blank" rel="noopener" aria-label="Instagram">
-      <span>IG</span>
-    </a>
-  </aside>
+ <div class="social-apps" aria-label="روابط التواصل">
+  <a class="app-btn ig" href="https://instagram.com/USERNAME" target="_blank" rel="noopener" aria-label="Instagram">
+    <i class="fa-brands fa-instagram"></i>
+  </a>
+
+  <a class="app-btn wa" href="https://wa.me/9647XXXXXXXXX" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+
+  <a class="app-btn fb" href="https://facebook.com/PAGE" target="_blank" rel="noopener" aria-label="Facebook">
+    <i class="fa-brands fa-facebook-f"></i>
+  </a>
+
+  <a class="app-btn tt" href="https://tiktok.com/@USERNAME" target="_blank" rel="noopener" aria-label="TikTok">
+    <i class="fa-brands fa-tiktok"></i>
+  </a>
+
+  <a class="app-btn mail" href="mailto:info@zuhoor.com" aria-label="Email">
+    <i class="fa-solid fa-envelope"></i>
+  </a>
+
+  <a class="app-btn call" href="tel:+9647XXXXXXXXX" aria-label="Call">
+    <i class="fa-solid fa-phone"></i>
+  </a>
+</div>
 
   <!-- HOME -->
   <main id="home" class="page">
@@ -181,4 +201,5 @@
 
   <script src="js/page.js"></script>
 </body>
+
 </html>
