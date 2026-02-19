@@ -1,0 +1,8 @@
+{
+  "name": "zuhoor-alsharq-website",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "ads:build": "node tools/generate-ads-json.js"
+  }
+}

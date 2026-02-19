@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>زهور الشرق | استقدام وتشغيل الأيدي العاملة الأجنبية</title>
+  <meta name="description" content="زهور الشرق - بغداد الكرادة داخل - تقاطع سبع قصور. واتساب 0770 997 9459" />
+  <meta name="theme-color" content="#121212">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <!-- NAV -->
+  <header class="top-nav" id="top">
+    <div class="nav-inner">
+      <a class="nav-logo" id="brandLogo" href="#home" aria-label="الرئيسية">
+        <img src="ads/logo/logo.png" alt="Zuhoor Alsharq Logo" />
+      </a>
+
+      <nav class="nav-links" aria-label="التنقل">
+        <a href="#home" class="active">الرئيسية</a>
+        <a href="#about">عن الشركة</a>
+        <a href="#services">خدماتنا</a>
+        <a href="#offers">العروض</a>
+        <a href="#contact">تواصل معنا</a>
+      </nav>
+
+      <button class="nav-lang" id="langToggle" type="button">عربي | کوردی</button>
+    </div>
+  </header>
+
+  <!-- SOCIAL -->
+  <div class="social-row" aria-label="أزرار التواصل">
+    <a class="soc" id="igBtn" target="_blank" rel="noopener" aria-label="Instagram"><span class="soc-ico">IG</span></a>
+    <a class="soc" id="fbBtn" target="_blank" rel="noopener" aria-label="Facebook"><span class="soc-ico">f</span></a>
+    <a class="soc" id="waBtn" target="_blank" rel="noopener" aria-label="WhatsApp"><span class="soc-ico">WA</span></a>
+  </div>
+
+  <!-- HOME (Sketch Layout) -->
+  <section id="home">
+    <div class="sec-wrap">
+      <div class="home-grid">
+
+        <!-- LEFT: media2 + media1 -->
+        <aside class="col-left">
+          <div class="media-card media2 reveal" data-folder="media2">
+            <div class="pill">media2</div>
+            <button class="arrow right" data-dir="next" aria-label="التالي">›</button>
+            <button class="arrow left"  data-dir="prev" aria-label="السابق">‹</button>
+            <div class="media-stage" id="stage-media2"></div>
+          </div>
+
+          <div class="media-card media1 reveal" data-folder="media1">
+            <div class="pill">media1</div>
+            <button class="arrow right" data-dir="next" aria-label="التالي">›</button>
+            <button class="arrow left"  data-dir="prev" aria-label="السابق">‹</button>
+            <div class="media-stage" id="stage-media1"></div>
+          </div>
+        </aside>
+
+        <!-- CENTER: media10 video + 4 icon cards + bottom strip -->
+        <main class="col-center">
+
+          <div class="media-card media10 reveal" data-folder="media10">
+            <div class="pill">إعلان فيديو</div>
+
+            <!-- Sound toggle (starts muted) -->
+            <button class="sound-btn" type="button" aria-label="تشغيل/إيقاف الصوت" data-sound>
+              🔇 صوت
+            </button>
+
+            <div class="media-stage" id="stage-media10"></div>
+          </div>
+
+          <div class="icon-grid reveal">
+            <div class="icon-card" data-open="servicesModal">
+              <div class="ico">✓</div>
+              <div class="label">الخدمات</div>
+            </div>
+            <div class="icon-card" data-open="offersModal">
+              <div class="ico">★</div>
+              <div class="label">العروض</div>
+            </div>
+            <div class="icon-card" data-open="aboutModal">
+              <div class="ico">i</div>
+              <div class="label">من نحن</div>
+            </div>
+            <div class="icon-card" data-open="contactModal">
+              <div class="ico">☎</div>
+              <div class="label">اتصل بنا</div>
+            </div>
+          </div>
+
+          <div class="strip reveal">
+            <div class="strip-stage" id="stripStage"></div>
+          </div>
+
+        </main>
+
+        <!-- RIGHT: phone-size poster + title above -->
+        <aside class="col-right">
+          <div class="hero-titleBlock fx-name">
+            <h1 class="hero-title">شركة زهور الشرق</h1>
+            <p class="hero-sub">لاستقدام وتشغيل الأيدي العاملة الأجنبية والعربية</p>
+          </div>
+
+          <div class="phone-poster reveal" data-folder="logo">
+            <div class="poster-stage">
+              <img id="posterLogo" src="ads/logo/logo.png" alt="Zuhoor Alsharq Poster" />
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Placeholder sections (for nav anchors) -->
+  <section id="about" style="height:40px"></section>
+  <section id="services" style="height:40px"></section>
+  <section id="offers" style="height:40px"></section>
+  <section id="contact" style="height:40px"></section>
+
+  <!-- MODALS -->
+  <div class="modal" id="servicesModal" aria-hidden="true">
+    <div class="backdrop" data-close></div>
+    <div class="panel" role="dialog" aria-modal="true" aria-label="الخدمات">
+      <div class="head">
+        <h3>الخدمات</h3>
+        <button class="close" type="button" data-close>×</button>
+      </div>
+      <div class="body">قريباً…</div>
+    </div>
+  </div>
+
+  <div class="modal" id="offersModal" aria-hidden="true">
+    <div class="backdrop" data-close></div>
+    <div class="panel" role="dialog" aria-modal="true" aria-label="العروض">
+      <div class="head">
+        <h3>العروض</h3>
+        <button class="close" type="button" data-close>×</button>
+      </div>
+      <div class="body">قريباً…</div>
+    </div>
+  </div>
+
+  <div class="modal" id="aboutModal" aria-hidden="true">
+    <div class="backdrop" data-close></div>
+    <div class="panel" role="dialog" aria-modal="true" aria-label="من نحن">
+      <div class="head">
+        <h3>من نحن</h3>
+        <button class="close" type="button" data-close>×</button>
+      </div>
+      <div class="body">قريباً…</div>
+    </div>
+  </div>
+
+  <div class="modal" id="contactModal" aria-hidden="true">
+    <div class="backdrop" data-close></div>
+    <div class="panel" role="dialog" aria-modal="true" aria-label="اتصل بنا">
+      <div class="head">
+        <h3>اتصل بنا</h3>
+        <button class="close" type="button" data-close>×</button>
+      </div>
+      <div class="body">قريباً…</div>
+    </div>
+  </div>
+
+  <script src="js/page.js"></script>
+
+  <!-- Small CSS for sound button (kept here to avoid editing style.css now) -->
+  <style>
+    .sound-btn{
+      position:absolute; left:12px; top:12px;
+      z-index:7;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(202,162,74,.45);
+      background: rgba(255,255,255,.40);
+      backdrop-filter: blur(10px);
+      font-weight:1000;
+      cursor:pointer;
+      box-shadow: 0 14px 30px rgba(0,0,0,.14);
+    }
+  </style>
+</body>
+</html>

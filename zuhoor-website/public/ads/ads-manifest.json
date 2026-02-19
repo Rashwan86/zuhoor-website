@@ -1,0 +1,58 @@
+{
+  "logo": "ads/logo/logo.png",
+  "media1": [
+    {
+      "type": "image",
+      "src": "ads/media1/ad1.jpeg"
+    },
+    {
+      "type": "image",
+      "src": "ads/media1/ad2.jpeg"
+    },
+    {
+      "type": "image",
+      "src": "ads/media1/WhatsApp Image 2026-02-19 at 10.30.26 AM.jpeg"
+    }
+  ],
+  "media2": [
+    {
+      "type": "image",
+      "src": "ads/media2/466793575_122197032368132451_7229894397031656326_n.jpg"
+    },
+    {
+      "type": "image",
+      "src": "ads/media2/WhatsApp Image 2026-02-19 at 10.30.27 AM.jpeg"
+    }
+  ],
+  "media3": [
+    {
+      "type": "image",
+      "src": "ads/media3/ad3.jpeg"
+    },
+    {
+      "type": "image",
+      "src": "ads/media3/ad4.jpeg"
+    },
+    {
+      "type": "image",
+      "src": "ads/media3/ad5.jpeg"
+    }
+  ],
+  "media4": [
+    {
+      "type": "image",
+      "src": "ads/media4/ad4.jpeg"
+    }
+  ],
+  "media5": [],
+  "media6": [],
+  "media7": [],
+  "media8": [],
+  "media9": [],
+  "media10": [
+    {
+      "type": "video",
+      "src": "ads/media10/0206 (8).mp4"
+    }
+  ]
+}
