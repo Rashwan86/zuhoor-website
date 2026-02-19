@@ -150,16 +150,7 @@ html, body {
 }
 
 /* ===== Social (vertical) ===== */
-.social-float{
-  position:fixed;
-  left:18px;
-  top:50%;
-  transform: translateY(-50%);
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  z-index:60;
-}
+
 .soc{
   width:56px;height:56px;border-radius:999px;
   display:flex;align-items:center;justify-content:center;
@@ -684,4 +675,59 @@ body.js-on.is-ready .hero-type {
 .strip-viewport{
   scrollbar-width: none;
 }
+/* Social App Icons (like real apps) */
+.social-apps{
+  position: absolute; /* إذا عندك مكان محدد */
+  left: 18px;
+  bottom: 18px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  z-index: 50;
+}
+
+.app-btn{
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;            /* شكل تطبيق */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #fff !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,.18);
+  border: 1px solid rgba(255,255,255,.18);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: transform .15s ease, filter .15s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-btn i{
+  font-size: 24px;
+  line-height: 1;
+}
+
+.app-btn:active{ transform: scale(.96); }
+.app-btn:hover{ filter: brightness(1.05); }
+
+/* Brand looks */
+.app-btn.ig{
+  background: radial-gradient(circle at 30% 30%,
+    #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+}
+.app-btn.wa{ background: #25D366; }
+.app-btn.fb{ background: #1877F2; }
+.app-btn.tt{ background: #111; }
+.app-btn.mail{ background: #6c63ff; } /* لون لطيف للإيميل */
+.app-btn.call{ background: #00b894; } /* لون للاتصال */
+
+/* Mobile sizing */
+@media (max-width: 480px){
+  .social-apps{ left: 12px; bottom: 12px; gap: 10px; }
+  .app-btn{ width: 46px; height: 46px; border-radius: 14px; }
+  .app-btn i{ font-size: 21px; }
+}
+
 }
