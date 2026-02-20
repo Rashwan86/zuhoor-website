@@ -6,39 +6,24 @@
   <title>زهور الشرق | استقدام وتشغيل الأيدي العاملة الأجنبية والعربية</title>
   <meta name="theme-color" content="#0f1116" />
 
-  <!-- Google Font: Almarai -->
+  <!-- Google Fonts: Almarai + El Messiri -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
 
-  <!-- Font Awesome (Brand + Solid Icons) -->
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=El+Messiri:wght@400;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-        integrity="sha512-xh6O8k5Q5e0siJmq9Vc3rroWAtxEvsC0BpvyEukgqS0bkkCm1cW0XkyRjO6jwxKF1u9IiMaivGi99Z+eK6Ff8g=="
         crossorigin="anonymous"
         referrerpolicy="no-referrer" />
 
-  <!-- Main CSS (نسخة واحدة فقط مع كاش بستر) -->
-  <link rel="stylesheet" href="css/style.css?v=3" />
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="css/style.css?v=100" />
 </head>
 
-<script>
-  // يعلن أن JS شغال (حتى نخفي مؤقتاً للأنيميشن)
-  document.body.classList.add("js-on");
-
-  // يشغل الأنيميشن بعد أول رسم للشاشة
-  document.addEventListener("DOMContentLoaded", () => {
-    requestAnimationFrame(() => document.body.classList.add("is-ready"));
-  });
-
-  // مهم لآيفون: أحياناً يرجع الصفحة من الكاش بدون events
-  window.addEventListener("pageshow", () => {
-    requestAnimationFrame(() => document.body.classList.add("is-ready"));
-  });
-</script>
-
 <body>
-  <!-- Chrome/Marble Background -->
+  <!-- Background -->
   <div class="bg" aria-hidden="true"></div>
 
   <!-- Top Bar -->
@@ -62,70 +47,89 @@
     </div>
   </header>
 
-  <!-- Floating Social (vertical) -->
- <div class="social-apps" aria-label="روابط التواصل">
-  <a class="app-btn ig" href="https://instagram.com/USERNAME" target="_blank" rel="noopener" aria-label="Instagram">
+  <!-- Social App Icons -->
+<div class="social-apps" aria-label="روابط التواصل">
+
+  <a id="igBtn"
+     class="app-btn ig"
+     target="_blank"
+     rel="noopener"
+     aria-label="Instagram">
     <i class="fa-brands fa-instagram"></i>
   </a>
 
-  <a class="app-btn wa" href="https://wa.me/9647XXXXXXXXX" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <a id="waBtn"
+     class="app-btn wa"
+     target="_blank"
+     rel="noopener"
+     aria-label="WhatsApp">
     <i class="fa-brands fa-whatsapp"></i>
   </a>
 
-  <a class="app-btn fb" href="https://facebook.com/PAGE" target="_blank" rel="noopener" aria-label="Facebook">
+  <a id="fbBtn"
+     class="app-btn fb"
+     target="_blank"
+     rel="noopener"
+     aria-label="Facebook">
     <i class="fa-brands fa-facebook-f"></i>
   </a>
 
-  <a class="app-btn tt" href="https://tiktok.com/@USERNAME" target="_blank" rel="noopener" aria-label="TikTok">
+  <a id="ttBtn"
+     class="app-btn tt"
+     target="_blank"
+     rel="noopener"
+     aria-label="TikTok">
     <i class="fa-brands fa-tiktok"></i>
   </a>
 
-  <a class="app-btn mail" href="mailto:info@zuhoor.com" aria-label="Email">
+  <a id="mailBtn"
+     class="app-btn mail"
+     aria-label="Email">
     <i class="fa-solid fa-envelope"></i>
   </a>
 
-  <a class="app-btn call" href="tel:+9647XXXXXXXXX" aria-label="Call">
+  <a id="callBtn"
+     class="app-btn call"
+     aria-label="Call">
     <i class="fa-solid fa-phone"></i>
   </a>
+
 </div>
 
   <!-- HOME -->
   <main id="home" class="page">
-    <!-- 3 Columns Board -->
     <section class="board" aria-label="لوحة العرض الرئيسية">
 
-      <!-- LEFT: media1 + media2 stacked -->
+      <!-- LEFT -->
       <div class="col col-left">
 
-  <div class="ad-line">
-  <span>الثقة تبدأ من الاختيار الصحيح</span>
-  <span>ونحن نختار لك الأفضل</span>
-</div>
+        <div class="ad-line">
+          <span>الثقة تبدأ من الاختيار الصحيح</span>
+          <span>ونحن نختار لك الأفضل</span>
+        </div>
 
-  <div class="floatcard media-box" data-box="media1">
-    <div class="media-fill">
-      <img alt="media1" />
-    </div>
-  </div>
+        <div class="floatcard media-box" data-box="media1">
+          <div class="media-fill">
+            <img alt="media1" />
+          </div>
+        </div>
 
-  <div class="floatcard media-box" data-box="media2">
-    <div class="media-fill">
-      <img alt="media2" />
-    </div>
-  </div>
+        <div class="floatcard media-box" data-box="media2">
+          <div class="media-fill">
+            <img alt="media2" />
+          </div>
+        </div>
 
-</div>
+      </div>
 
-      <!-- CENTER: media10 video + 4 action squares -->
+      <!-- CENTER -->
       <div class="col col-center">
         <div class="floatcard video-box" data-box="media10">
           <div class="video-wrap">
             <video id="heroVideo" playsinline muted loop preload="metadata"></video>
 
             <div class="video-ui">
-              <button class="vbtn" id="muteBtn" type="button" aria-label="كتم/تشغيل الصوت">
-                🔇
-              </button>
+              <button class="vbtn" id="muteBtn" type="button" aria-label="كتم/تشغيل الصوت">🔇</button>
             </div>
           </div>
         </div>
@@ -153,7 +157,7 @@
         </div>
       </div>
 
-      <!-- RIGHT: title + logo -->
+      <!-- RIGHT -->
       <div class="col col-right">
         <div class="hero-title">
           <div class="hero-line hero-drop" id="brandName">زهور الشرق</div>
@@ -167,11 +171,13 @@
           </div>
         </div>
       </div>
+
     </section>
 
-    <!-- Bottom Full-width Slider: media3..media9 -->
+    <!-- Bottom Slider -->
     <section class="bottom-strip" aria-label="شريط الإعلانات السفلي">
       <div class="strip-inner">
+        <!-- الأسهم موجودة لكن مخفية بالـ CSS -->
         <button class="strip-arrow" id="stripPrev" aria-label="السابق">‹</button>
         <div class="strip-viewport" id="stripViewport" aria-label="سلايدر"></div>
         <button class="strip-arrow" id="stripNext" aria-label="التالي">›</button>
@@ -179,7 +185,7 @@
     </section>
   </main>
 
-  <!-- MODAL (center overlay, keep side columns visible) -->
+  <!-- MODAL -->
   <div class="modal" id="modal" aria-hidden="true">
     <div class="modal-panel" role="dialog" aria-modal="true" aria-label="نافذة معلومات">
       <button class="modal-close" id="modalClose" type="button" aria-label="إغلاق">✕</button>
@@ -190,7 +196,6 @@
       </div>
 
       <div class="modal-body" id="modalBody">
-        <!-- placeholder -->
         <div class="placeholder">
           <div class="ph-title">قريباً</div>
           <div class="ph-text">هذه صفحة منبثقة — سيتم إضافة التفاصيل لاحقاً.</div>
@@ -199,7 +204,21 @@
     </div>
   </div>
 
+<script>
+  // تفعيل كلاس على html
+  document.documentElement.classList.add("js-on");
+
+  function makeReady(){
+    requestAnimationFrame(() => {
+      document.documentElement.classList.add("is-ready");
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", makeReady);
+  window.addEventListener("load", makeReady);
+  window.addEventListener("pageshow", makeReady);
+</script>
+
   <script src="js/page.js"></script>
 </body>
-
 </html>
