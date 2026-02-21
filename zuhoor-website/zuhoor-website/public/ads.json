@@ -1,0 +1,8 @@
+[
+  { "type": "image", "src": "ads/ad1.jpeg", "caption": "عاملات منزليات مدرّبات" },
+  { "type": "image", "src": "ads/ad2.jpeg", "caption": "جنسيات متعددة حسب الطلب" },
+  { "type": "image", "src": "ads/ad3.jpeg", "caption": "عقود واضحة ومتابعة" },
+  { "type": "image", "src": "ads/ad4.jpeg", "caption": "خدمة سريعة وموثوقة" },
+  { "type": "image", "src": "ads/ad5.jpeg", "caption": "تواصل معنا لمعرفة التفاصيل" },
+  { "type": "video", "src": "ads/0206 (8).mp4", "caption": "فيديو تعريفي" }
+]

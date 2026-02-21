@@ -1,0 +1,58 @@
+{
+  "logo": "ads/logo/logo.png",
+  "media1": [
+    {
+      "type": "image",
+      "src": "ads/media1/main.jpeg"
+    }
+  ],
+  "media2": [
+    {
+      "type": "image",
+      "src": "ads/media2/main.jpeg"
+    }
+  ],
+  "media3": [
+    {
+      "type": "image",
+      "src": "ads/media3/main.jpeg"
+    }
+  ],
+  "media4": [
+    {
+      "type": "image",
+      "src": "ads/media4/ad4.jpeg"
+    }
+  ],
+  "media5": [
+    {
+      "type": "image",
+      "src": "ads/media5/main.jpeg"
+    }
+  ],
+  "media6": [
+    {
+      "type": "image",
+      "src": "ads/media6/main.jpeg"
+    }
+  ],
+  "media7": [
+    {
+      "type": "image",
+      "src": "ads/media7/main.jpg"
+    }
+  ],
+  "media8": [
+    {
+      "type": "image",
+      "src": "ads/media8/main.jpeg"
+    }
+  ],
+  "media9": [],
+  "media10": [
+    {
+      "type": "video",
+      "src": "ads/media10/main.mp4"
+    }
+  ]
+}

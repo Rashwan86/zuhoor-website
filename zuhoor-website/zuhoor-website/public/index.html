@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>زهور الشرق | استقدام وتشغيل الأيدي العاملة الأجنبية والعربية</title>
+  <meta name="theme-color" content="#0f1116" />
+
+  <!-- Google Fonts: Almarai + El Messiri -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=El+Messiri:wght@400;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
+
+        <style>
+  /* منع أي انزلاق/قفزة قبل تحميل ملف CSS */
+  html, body { margin:0; overflow-x:hidden; }
+
+  /* خليه يطابق إعدادات الديسكتوب الأساسية من أول لحظة */
+  .page{ width:min(1200px, 94%); margin:18px auto; }
+
+  /* أهم سطر: يثبت اتجاه اللوحة (للديسكتوب) من أول paint */
+  .board{ direction:ltr; }
+
+  /* على الموبايل نخليه RTL من البداية */
+  @media (max-width:980px){
+    .page{ width:min(560px, 94%); margin:12px auto; }
+    .board{ direction:rtl; }
+  }
+</style>
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="css/style.css?v=201" />
+</head>
+
+<body>
+  <!-- Background -->
+  <div class="bg" aria-hidden="true"></div>
+
+  <!-- Top Bar -->
+  <header class="topbar" id="top">
+    <div class="topbar-inner">
+      <div class="topbar-left">
+        <button class="pill pill-ghost" type="button" id="langBtn">عربي | کوردی</button>
+      </div>
+
+      <nav class="topnav" aria-label="التنقل">
+        <a class="pill is-active" href="#home">الرئيسية</a>
+        <a class="pill" href="#home" data-open="about">من نحن</a>
+        <a class="pill" href="#home" data-open="services">خدمات</a>
+        <a class="pill" href="#home" data-open="offers">العروض</a>
+        <a class="pill" href="#home" data-open="contact">تواصل معنا</a>
+      </nav>
+
+      <div class="topbar-right">
+        <span class="dot"></span>
+
+        <!-- Mobile menu button (يظهر فقط على الجوال) -->
+        <button class="m-menu-btn" id="mMenuBtn" type="button" aria-label="القائمة">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu (الجوال فقط) -->
+  <div class="m-drawer" id="mDrawer" aria-hidden="true">
+    <div class="m-drawer-panel" role="dialog" aria-modal="true" aria-label="قائمة الهاتف">
+      <div class="m-drawer-head">
+        <div class="m-drawer-title">القائمة</div>
+        <button class="m-drawer-close" id="mDrawerClose" type="button" aria-label="إغلاق">✕</button>
+      </div>
+
+      <nav class="m-drawer-links" aria-label="روابط الهاتف">
+        <a href="#home" class="m-link">الرئيسية</a>
+        <a href="#home" class="m-link" data-open="offers">العروض</a>
+        <a href="#home" class="m-link" data-open="services">الخدمات</a>
+        <a href="#home" class="m-link" data-open="about">من نحن</a>
+        <a href="#home" class="m-link" data-open="contact">تواصل معنا</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Mobile Header Block (يظهر فقط على الجوال) -->
+  <section class="m-head" aria-label="رأس الجوال">
+    <div class="m-head-inner">
+
+      <div class="m-brand">
+        <div class="m-logo">
+         <img id="mLogoImg" alt="logo" src="ads/logo/logo.png" />
+        </div>
+
+        <div class="m-brand-text">
+          <!-- غيّر الاسم الإنكليزي كما تريد -->
+          <div class="m-brand-en" id="mBrandEn">Zuhoor Al Sharq Co.</div>
+          <div class="m-brand-ar" id="mBrandAr">زهور الشرق</div>
+          <div class="m-brand-tag" id="mBrandTag"
+               data-text="لاستقدام وتشغيل الأيادي العاملة الأجنبية والعربية"></div>
+        </div>
+      </div>
+
+      <!-- Social App Icons (نفس الأزرار الحالية لكن ستتحول أفقياً على الجوال + أنيميشن) -->
+      <div class="social-apps m-social" aria-label="روابط التواصل">
+        <a id="igBtn" class="app-btn ig" target="_blank" rel="noopener" aria-label="Instagram">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+        <a id="waBtn" class="app-btn wa" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        <a id="fbBtn" class="app-btn fb" target="_blank" rel="noopener" aria-label="Facebook">
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+        <a id="ttBtn" class="app-btn tt" target="_blank" rel="noopener" aria-label="TikTok">
+          <i class="fa-brands fa-tiktok"></i>
+        </a>
+        <a id="mailBtn" class="app-btn mail" aria-label="Email">
+          <i class="fa-solid fa-envelope"></i>
+        </a>
+        <a id="callBtn" class="app-btn call" aria-label="Call">
+          <i class="fa-solid fa-phone"></i>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <main id="home" class="page">
+    <section class="board" aria-label="لوحة العرض الرئيسية">
+
+      <!-- LEFT (سيختفي على الجوال) -->
+      <div class="col col-left">
+        <div class="ad-line">
+          <span>الثقة تبدأ من الاختيار الصحيح</span>
+          <span>ونحن نختار لك الأفضل</span>
+        </div>
+
+        <div class="floatcard media-box" data-box="media1">
+          <div class="media-fill">
+            <img alt="media1" />
+          </div>
+        </div>
+
+        <div class="floatcard media-box" data-box="media2">
+          <div class="media-fill">
+            <img alt="media2" />
+          </div>
+        </div>
+      </div>
+
+      <!-- CENTER -->
+      <div class="col col-center">
+        <div class="floatcard video-box" data-box="media10">
+          <div class="video-wrap">
+          <video id="heroVideo" playsinline muted autoplay loop preload="auto"></video>
+
+            <div class="video-ui">
+              <button class="vbtn" id="muteBtn" type="button" aria-label="كتم/تشغيل الصوت">🔇</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- أزرار الأقسام (سنخفيها على الجوال) -->
+        <div class="actions-grid" aria-label="أزرار الأقسام">
+          <button class="floatcard action-card" type="button" data-open="services">
+            <div class="action-ico">🛠️</div>
+            <div class="action-txt">الخدمات</div>
+          </button>
+
+          <button class="floatcard action-card" type="button" data-open="offers">
+            <div class="action-ico">🎁</div>
+            <div class="action-txt">العروض</div>
+          </button>
+
+          <button class="floatcard action-card" type="button" data-open="about">
+            <div class="action-ico">👤</div>
+            <div class="action-txt">من نحن</div>
+          </button>
+
+          <button class="floatcard action-card" type="button" data-open="contact">
+            <div class="action-ico">☎️</div>
+            <div class="action-txt">اتصل بنا</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT (سيختفي على الجوال لأن عندنا m-head فوق) -->
+      <div class="col col-right">
+        <div class="hero-title">
+          <div class="hero-line hero-drop" id="brandName">زهور الشرق</div>
+          <div class="hero-line hero-type" id="brandTagline"
+               data-text="لاستقدام وتشغيل الأيادي العاملة الأجنبية والعربية"></div>
+        </div>
+
+        <div class="floatcard logo-box">
+          <div class="media-fill">
+           <img id="logoImg" alt="logo" src="ads/logo/logo.png" />
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Bottom Slider (Desktop: media3..9) (Mobile: سنبنيه media1..9 بملف JS) -->
+    <section class="bottom-strip" aria-label="شريط الإعلانات السفلي">
+      <div class="strip-inner">
+        <button class="strip-arrow" id="stripPrev" aria-label="السابق">‹</button>
+        <div class="strip-viewport" id="stripViewport" aria-label="سلايدر"></div>
+        <button class="strip-arrow" id="stripNext" aria-label="التالي">›</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-label="نافذة معلومات">
+      <button class="modal-close" id="modalClose" type="button" aria-label="إغلاق">✕</button>
+
+      <div class="modal-head">
+        <div class="modal-title" id="modalTitle">عنوان</div>
+        <div class="modal-sub" id="modalSub">وصف مختصر</div>
+      </div>
+
+      <div class="modal-body" id="modalBody">
+        <div class="placeholder">
+          <div class="ph-title">قريباً</div>
+          <div class="ph-text">هذه صفحة منبثقة — سيتم إضافة التفاصيل لاحقاً.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  document.documentElement.classList.add("js-on");
+
+  function makeReady(){
+    requestAnimationFrame(() => {
+      document.documentElement.classList.add("is-ready");
+      document.documentElement.classList.add("m-ready"); // 🔥 هذا السطر الناقص
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", makeReady);
+  window.addEventListener("load", makeReady);
+  window.addEventListener("pageshow", makeReady);
+</script>
+
+  <script src="js/page.js"></script>
+</body>
+</html>
