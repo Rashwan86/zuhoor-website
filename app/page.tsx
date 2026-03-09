@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 type Lang = "ar" | "en";
 type ServiceType = "recruitment" | "housemaid" | "general";
 
-// تم استبدال any بـ Record<string, string> لحل مشكلة Typescript
 const TEXT: Record<Lang, Record<string, string>> = {
   ar: {
     dir: "rtl",
@@ -22,10 +21,10 @@ const TEXT: Record<Lang, Record<string, string>> = {
     more: "المزيد",
     about: "من نحن",
     aboutText:
-      "شركة متخصصة باستقدام الأيدي العاملة ومتابعة الإجراءات القانونية والإقامة وتوفير حلول السكن/النقل عند الحاجة.",
-    ads: "الإعلانات",
-    photos: "صور",
-    videos: "فيديو",
+      "شركة زهور الشرق هي شركة متخصصة باستقدام الأيدي العاملة ومتابعة الإجراءات القانونية والإقامة، وتوفير حلول السكن والنقل عند الحاجة. نسعى دائماً لتقديم أفضل الكفاءات لتلبية احتياجاتكم.",
+    ads: "أحدث الإعلانات",
+    photos: "الصور",
+    videos: "الفيديو",
     requestService: "طلب خدمة",
     requestServiceDesc: "أرسل طلبك وسنتواصل معك بأسرع وقت",
     serviceType: "نوع الطلب",
@@ -58,6 +57,7 @@ const TEXT: Record<Lang, Record<string, string>> = {
     navServices: "خدمات",
     profile: "الشخصي",
     nationality: "الجنسية : ",
+    menu: "القائمة",
   },
   en: {
     dir: "ltr",
@@ -72,8 +72,8 @@ const TEXT: Record<Lang, Record<string, string>> = {
     more: "More",
     about: "About us",
     aboutText:
-      "We specialize in recruitment, legal follow-up & residency, and optional housing/transport solutions when needed.",
-    ads: "Ads",
+      "Zuhoor Alsharq specializes in recruitment, legal follow-up & residency, and optional housing/transport solutions. We strive to provide the best talents for your needs.",
+    ads: "Latest Ads",
     photos: "Photos",
     videos: "Video",
     requestService: "Request a service",
@@ -108,6 +108,7 @@ const TEXT: Record<Lang, Record<string, string>> = {
     navServices: "Services",
     profile: "Profile",
     nationality: "Nationality : ",
+    menu: "Menu",
   },
 };
 
@@ -166,9 +167,14 @@ export default function HomePage() {
   const [lang, setLang] = useState<Lang>("ar");
   const t = TEXT[lang];
 
+  // ===== Modals & Menus State =====
+  const [openMenu, setOpenMenu] = useState(false);
+  const [openAbout, setOpenAbout] = useState(false);
+  const [openServicesModal, setOpenServicesModal] = useState(false);
   const [openRequest, setOpenRequest] = useState(false);
   const [openPay, setOpenPay] = useState(false);
 
+  // ===== Form State =====
   const [serviceType, setServiceType] = useState<ServiceType>("recruitment");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -177,10 +183,50 @@ export default function HomePage() {
   const [sending, setSending] = useState(false);
   const [sentMsg, setSentMsg] = useState<string | null>(null);
 
+  // ===== Dynamic Media State (Photos & Videos from public folder) =====
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [videos, setVideos] = useState<string[]>([]);
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [videoIndex, setVideoIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   useEffect(() => {
     document.documentElement.dir = t.dir;
     document.documentElement.lang = lang;
   }, [lang, t.dir]);
+
+  // Fetch Media
+  useEffect(() => {
+    fetch("/api/media")
+      .then((r) => r.json())
+      .then((data) => {
+        setPhotos(data.photos || []);
+        setVideos(data.videos || []);
+      })
+      .catch(() => {
+        setPhotos([]);
+        setVideos([]);
+      });
+  }, []);
+
+  // Photo Carousel Timer
+  useEffect(() => {
+    if (!photos.length) return;
+    const timer = setInterval(() => {
+      setPhotoIndex((i) => (i + 1) % photos.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [photos]);
+
+  // Video End Handler
+  function handleVideoEnd() {
+    if (!videos.length) return;
+    if (videos.length === 1) {
+      videoRef.current?.play();
+    } else {
+      setVideoIndex((i) => (i + 1) % videos.length);
+    }
+  }
 
   const servicesList = useMemo(
     () => [
@@ -239,12 +285,13 @@ export default function HomePage() {
     "transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_40px_rgba(255,215,0,0.15)] hover:border-[#FFD700]/70";
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden relative">
       <div className="pointer-events-none fixed inset-0 opacity-40 z-0">
         <div className="absolute -top-44 left-1/2 -translate-x-1/2 h-[520px] w-[520px] rounded-full bg-[#FFD700]/10 blur-3xl" />
         <div className="absolute top-1/2 right-0 -translate-y-1/2 h-[400px] w-[400px] rounded-full bg-[#FFF4B0]/5 blur-3xl" />
       </div>
 
+      {/* Top bar */}
       <header className="relative z-10 px-4 py-4">
         <div
           className={cx(
@@ -271,6 +318,22 @@ export default function HomePage() {
             </div>
 
             <div className="flex items-center gap-3">
+              {/* Desktop Menu Links */}
+              <div className="hidden md:flex items-center gap-6 mx-4">
+                <button
+                  onClick={() => setOpenAbout(true)}
+                  className="text-sm font-medium hover:text-[#FFD700] transition"
+                >
+                  {t.about}
+                </button>
+                <button
+                  onClick={() => setOpenServicesModal(true)}
+                  className="text-sm font-medium hover:text-[#FFD700] transition"
+                >
+                  {t.services}
+                </button>
+              </div>
+
               <button
                 onClick={() => setLang((p) => (p === "ar" ? "en" : "ar"))}
                 className={cx(
@@ -281,13 +344,53 @@ export default function HomePage() {
               >
                 {t.language}
               </button>
+
+              {/* Mobile Menu Hamburger */}
+              <button
+                onClick={() => setOpenMenu(!openMenu)}
+                className={cx(
+                  "md:hidden rounded-xl px-3 py-2 text-lg font-medium transition-colors",
+                  goldBorder,
+                  "bg-black/50 hover:bg-[#FFD700]/10 text-[#FFD700]",
+                )}
+              >
+                ☰
+              </button>
             </div>
           </div>
+
+          {/* Mobile Dropdown Menu */}
+          {openMenu && (
+            <div className="md:hidden border-t border-[#D4AF37]/20 bg-black/80 rounded-b-2xl p-4 flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  setOpenAbout(true);
+                  setOpenMenu(false);
+                }}
+                className={cx(
+                  "text-right font-bold py-2 border-b border-white/5",
+                  goldText,
+                )}
+              >
+                {t.about}
+              </button>
+              <button
+                onClick={() => {
+                  setOpenServicesModal(true);
+                  setOpenMenu(false);
+                }}
+                className={cx("text-right font-bold py-2", goldText)}
+              >
+                {t.services}
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
       <main className="relative z-10 px-4 pb-24">
         <div className="mx-auto max-w-7xl space-y-12">
+          {/* Hero Section */}
           <section
             className={cx(
               "relative overflow-hidden rounded-3xl p-8 md:p-12 bg-black/40 backdrop-blur-md text-center md:text-start flex flex-col md:flex-row items-center justify-between gap-8",
@@ -313,7 +416,6 @@ export default function HomePage() {
                 >
                   {t.requestService}
                 </button>
-                {/* استبدال a بـ Link */}
                 <Link
                   href="/login"
                   className={cx(
@@ -334,6 +436,87 @@ export default function HomePage() {
             </div>
           </section>
 
+          {/* Dynamic Media Section (الإعلانات - Photos & Videos) */}
+          {(photos.length > 0 || videos.length > 0) && (
+            <section>
+              <div className="flex items-end justify-between mb-8 border-b border-[#D4AF37]/20 pb-4">
+                <div>
+                  <h2
+                    className={cx(
+                      "text-3xl font-bold bg-gradient-to-r from-[#8B7500] via-[#FFD700] to-[#FFF4B0] bg-clip-text text-transparent mb-2",
+                    )}
+                  >
+                    {t.ads}
+                  </h2>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Photos Card */}
+                {photos.length > 0 && (
+                  <div
+                    className={cx(
+                      "rounded-2xl overflow-hidden bg-black/60 backdrop-blur-md flex flex-col group",
+                      goldBorder,
+                      cardHoverMotion,
+                    )}
+                  >
+                    <div className="flex justify-between items-center p-4 bg-black/80 border-b border-[#D4AF37]/20">
+                      <h3 className={cx("font-bold text-lg", goldText)}>
+                        📸 {t.photos}
+                      </h3>
+                      <span className="text-xs text-white/50">
+                        {photoIndex + 1} / {photos.length}
+                      </span>
+                    </div>
+                    <div className="h-[300px] relative w-full">
+                      <Image
+                        src={photos[photoIndex]}
+                        alt="Ad"
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Videos Card */}
+                {videos.length > 0 && (
+                  <div
+                    className={cx(
+                      "rounded-2xl overflow-hidden bg-black/60 backdrop-blur-md flex flex-col group",
+                      goldBorder,
+                      cardHoverMotion,
+                    )}
+                  >
+                    <div className="flex justify-between items-center p-4 bg-black/80 border-b border-[#D4AF37]/20">
+                      <h3 className={cx("font-bold text-lg", goldText)}>
+                        🎥 {t.videos}
+                      </h3>
+                      <span className="text-xs text-white/50">
+                        {videoIndex + 1} / {videos.length}
+                      </span>
+                    </div>
+                    <div className="h-[300px] relative w-full bg-black/90">
+                      <video
+                        ref={videoRef}
+                        src={videos[videoIndex]}
+                        className="w-full h-full object-contain"
+                        autoPlay
+                        muted
+                        playsInline
+                        onEnded={handleVideoEnd}
+                        controls
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* Services Cards (اختصار للخدمات في الرئيسية) */}
           <section>
             <div className="text-center mb-10">
               <h2
@@ -350,7 +533,7 @@ export default function HomePage() {
               {servicesList.map((s, idx) => (
                 <div
                   key={idx}
-                  onClick={() => setOpenRequest(true)}
+                  onClick={() => setOpenServicesModal(true)}
                   className={cx(
                     "group cursor-pointer rounded-2xl p-6 bg-black/50 backdrop-blur-sm relative overflow-hidden",
                     goldBorder,
@@ -370,6 +553,7 @@ export default function HomePage() {
             </div>
           </section>
 
+          {/* Workers Section */}
           <section>
             <div className="flex items-end justify-between mb-8 border-b border-[#D4AF37]/20 pb-4">
               <div>
@@ -404,7 +588,6 @@ export default function HomePage() {
                   )}
                 >
                   <div className="h-56 overflow-hidden relative">
-                    {/* استخدام Next/Image لحل تحذير LCP */}
                     <Image
                       src={worker.img}
                       alt={worker.jobEn}
@@ -438,6 +621,7 @@ export default function HomePage() {
             </button>
           </section>
 
+          {/* Contact Section */}
           <section
             className={cx(
               "rounded-3xl p-8 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30",
@@ -511,7 +695,6 @@ export default function HomePage() {
           )}
         >
           <div className="grid grid-cols-4 py-3 text-xs font-medium">
-            {/* استبدال a بـ Link */}
             <Link
               href="/"
               className="flex flex-col items-center text-[#FFD700]"
@@ -520,13 +703,12 @@ export default function HomePage() {
               {t.home}
             </Link>
             <button
-              onClick={() => setOpenRequest(true)}
+              onClick={() => setOpenServicesModal(true)}
               className="flex flex-col items-center text-white/60 hover:text-[#FFD700] transition"
             >
               <span className="text-lg">📋</span>
               {t.navServices}
             </button>
-            {/* استبدال a بـ Link */}
             <Link
               href="/login"
               className="flex flex-col items-center text-white/60 hover:text-[#FFD700] transition"
@@ -544,6 +726,116 @@ export default function HomePage() {
         </div>
       </nav>
 
+      {/* ===== About Us Modal ===== */}
+      {openAbout && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => setOpenAbout(false)}
+          />
+          <div
+            className={cx(
+              "relative w-full max-w-lg rounded-2xl p-6 bg-[#0a0a0a]",
+              goldBorder,
+              goldGlow,
+              "animate-in fade-in zoom-in duration-300",
+            )}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className={cx("text-2xl font-bold", goldText)}>{t.about}</h3>
+              <button
+                className={cx(
+                  "rounded-lg px-3 py-1 text-sm bg-[#FFD700]/10 hover:bg-[#FFD700]/20 transition",
+                  goldText,
+                )}
+                onClick={() => setOpenAbout(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="text-white/80 leading-relaxed text-lg border-t border-[#D4AF37]/20 pt-4">
+              {t.aboutText}
+            </div>
+            <button
+              onClick={() => setOpenAbout(false)}
+              className={cx(
+                "w-full mt-8 rounded-xl px-4 py-3 font-bold text-black bg-gradient-to-r from-[#8B7500] via-[#FFD700] to-[#FFF4B0] hover:brightness-110 transition-all",
+              )}
+            >
+              {t.close}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ===== Services Modal (الصفحة المنبثقة للخدمات) ===== */}
+      {openServicesModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => setOpenServicesModal(false)}
+          />
+          <div
+            className={cx(
+              "relative w-full max-w-2xl rounded-2xl p-6 bg-[#0a0a0a] max-h-[85vh] overflow-y-auto",
+              goldBorder,
+              goldGlow,
+              "animate-in fade-in zoom-in duration-300",
+            )}
+          >
+            <div className="flex items-center justify-between mb-6 sticky top-0 bg-[#0a0a0a] z-10 pb-2 border-b border-[#D4AF37]/20">
+              <h3 className={cx("text-2xl font-bold", goldText)}>
+                {t.services}
+              </h3>
+              <button
+                className={cx(
+                  "rounded-lg px-3 py-1 text-sm bg-[#FFD700]/10 hover:bg-[#FFD700]/20 transition",
+                  goldText,
+                )}
+                onClick={() => setOpenServicesModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4 mt-4">
+              {servicesList.map((s, idx) => (
+                <div
+                  key={idx}
+                  className={cx(
+                    "p-5 rounded-xl bg-black/50 border border-[#D4AF37]/20",
+                    cardHoverMotion,
+                  )}
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl">{s.icon}</span>
+                    <h4 className={cx("font-bold text-lg", goldText)}>
+                      {lang === "ar" ? s.titleAr : s.titleEn}
+                    </h4>
+                  </div>
+                  <p className="text-white/70 leading-relaxed text-sm md:text-base mr-9">
+                    {lang === "ar" ? s.descAr : s.descEn}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => {
+                setOpenServicesModal(false);
+                setOpenRequest(true);
+              }}
+              className={cx(
+                "w-full mt-8 rounded-xl px-4 py-4 font-bold text-black bg-gradient-to-r from-[#8B7500] via-[#FFD700] to-[#FFF4B0] hover:brightness-110 transition-all",
+              )}
+            >
+              {t.requestService}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ===== Request Modal ===== */}
       {openRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
@@ -683,6 +975,7 @@ export default function HomePage() {
         </div>
       )}
 
+      {/* ===== Payment Modal ===== */}
       {openPay && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
