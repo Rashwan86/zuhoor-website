@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 
 type Lang = "ar" | "en";
 type ServiceType = "recruitment" | "housemaid" | "general";
 
-const TEXT: Record<Lang, any> = {
+// تم استبدال any بـ Record<string, string> لحل مشكلة Typescript
+const TEXT: Record<Lang, Record<string, string>> = {
   ar: {
     dir: "rtl",
     appName: "ZUHOOR ALSHARQ",
@@ -13,7 +16,9 @@ const TEXT: Record<Lang, any> = {
     login: "تسجيل الدخول",
     register: "إنشاء حساب",
     services: "خدماتنا",
-    servicesHint: "اضغط على أي خدمة لعرض التفاصيل",
+    servicesHint: "نقدم أفضل الخدمات لتسهيل أعمالكم",
+    workers: "الأيدي العاملة المتوفرة",
+    workersHint: "نخبة من الكفاءات من مختلف الجنسيات",
     more: "المزيد",
     about: "من نحن",
     aboutText:
@@ -42,9 +47,9 @@ const TEXT: Record<Lang, any> = {
     tiktok: "تيك توك",
     email: "إيميل",
     call: "اتصال",
+    maps: "موقعنا على الخريطة",
     payment: "الدفع الإلكتروني",
-    payHint:
-      "هذه واجهة دفع (زر يفتح رابط). نربطها لاحقًا ببوابة دفع كي كارد/زين كاش.",
+    payHint: "بوابة الدفع الإلكتروني الموثوقة",
     kcard: "Ki Card",
     zaincash: "Zain Cash",
     open: "فتح",
@@ -52,6 +57,7 @@ const TEXT: Record<Lang, any> = {
     home: "الرئيسية",
     navServices: "خدمات",
     profile: "الشخصي",
+    nationality: "الجنسية : ",
   },
   en: {
     dir: "ltr",
@@ -60,7 +66,9 @@ const TEXT: Record<Lang, any> = {
     login: "Login",
     register: "Create account",
     services: "Our services",
-    servicesHint: "Tap any service to view details",
+    servicesHint: "Providing the best services to ease your work",
+    workers: "Available Manpower",
+    workersHint: "Top talents from various nationalities",
     more: "More",
     about: "About us",
     aboutText:
@@ -89,9 +97,9 @@ const TEXT: Record<Lang, any> = {
     tiktok: "TikTok",
     email: "Email",
     call: "Call",
+    maps: "Our Location",
     payment: "Online payment",
-    payHint:
-      "This is a UI button that opens a link. We’ll later integrate K-Card / ZainCash gateway.",
+    payHint: "Secure online payment gateway",
     kcard: "Ki Card",
     zaincash: "Zain Cash",
     open: "Open",
@@ -99,21 +107,56 @@ const TEXT: Record<Lang, any> = {
     home: "Home",
     navServices: "Services",
     profile: "Profile",
+    nationality: "Nationality : ",
   },
 };
 
-// ⭐ عدّل الروابط والأرقام هنا مرة واحدة فقط
 const CONTACT = {
-  whatsappNumber: "9647XXXXXXXXX", // مثال: 9647700000000
+  whatsappNumber: "9647XXXXXXXXX",
   phoneNumber: "9647XXXXXXXXX",
   email: "info@zuhoor-alsharq.com",
   facebook: "https://facebook.com/",
-  instagram: "https://instagram.com/",
+  instagram: "https://www.instagram.com/zuhur_alsharq?igsh=bHQxcHI3ejY1YXZz",
   tiktok: "https://tiktok.com/@",
-  // روابط الدفع (ضع روابطك لاحقًا)
+  maps: "https://maps.app.goo.gl/TPaxk3uHqUKroLp57",
   kcardPayLink: "https://example.com/kcard-pay",
   zaincashPayLink: "https://example.com/zaincash-pay",
 };
+
+const WORKERS = [
+  {
+    id: 1,
+    jobAr: "مدبرة منزل",
+    jobEn: "Housemaid",
+    natAr: "أوغندا",
+    natEn: "Uganda",
+    img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80",
+  },
+  {
+    id: 2,
+    jobAr: "مصففة شعر",
+    jobEn: "Hairdresser",
+    natAr: "لبنان",
+    natEn: "Lebanon",
+    img: "https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?auto=format&fit=crop&w=400&q=80",
+  },
+  {
+    id: 3,
+    jobAr: "رعاية مسنين",
+    jobEn: "Elderly Care",
+    natAr: "نيجيريا",
+    natEn: "Nigeria",
+    img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
+  },
+  {
+    id: 4,
+    jobAr: "موظفة استقبال",
+    jobEn: "Receptionist",
+    natAr: "سوريا",
+    natEn: "Syria",
+    img: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=400&q=80",
+  },
+];
 
 function cx(...arr: Array<string | false | undefined | null>) {
   return arr.filter(Boolean).join(" ");
@@ -123,18 +166,9 @@ export default function HomePage() {
   const [lang, setLang] = useState<Lang>("ar");
   const t = TEXT[lang];
 
-  // ====== Media from API ======
-  const [photos, setPhotos] = useState<string[]>([]);
-  const [videos, setVideos] = useState<string[]>([]);
-  const [photoIndex, setPhotoIndex] = useState(0);
-  const [videoIndex, setVideoIndex] = useState(0);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  // ====== Modals ======
   const [openRequest, setOpenRequest] = useState(false);
   const [openPay, setOpenPay] = useState(false);
 
-  // ====== Request form ======
   const [serviceType, setServiceType] = useState<ServiceType>("recruitment");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -144,78 +178,48 @@ export default function HomePage() {
   const [sentMsg, setSentMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    // ضبط اتجاه الصفحة
     document.documentElement.dir = t.dir;
     document.documentElement.lang = lang;
   }, [lang, t.dir]);
 
-  useEffect(() => {
-    fetch("/api/media")
-      .then((r) => r.json())
-      .then((data) => {
-        setPhotos(data.photos || []);
-        setVideos(data.videos || []);
-      })
-      .catch(() => {
-        setPhotos([]);
-        setVideos([]);
-      });
-  }, []);
-
-  // photo carousel
-  useEffect(() => {
-    if (!photos.length) return;
-    const timer = setInterval(() => {
-      setPhotoIndex((i) => (i + 1) % photos.length);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [photos]);
-
-  function handleVideoEnd() {
-    if (!videos.length) return;
-    if (videos.length === 1) {
-      videoRef.current?.play();
-    } else {
-      setVideoIndex((i) => (i + 1) % videos.length);
-    }
-  }
-
   const servicesList = useMemo(
     () => [
       {
-        titleAr: "استقدام الأيدي العاملة عند الطلب",
-        titleEn: "Recruitment on-demand",
+        icon: "✨",
+        titleAr: "استقدام الأيدي العاملة",
+        titleEn: "Recruitment Services",
         descAr: "توفير عمالة مناسبة بسرعة حسب احتياج شركتك.",
         descEn: "Fast hiring of suitable workers based on your needs.",
       },
       {
+        icon: "⚖️",
         titleAr: "متابعة قانونية وإقامة",
-        titleEn: "Legal follow-up & residency",
+        titleEn: "Legal & Residency",
         descAr: "متابعة إجراءات الفيزا والإقامة والتجديد.",
         descEn: "Visa/residency procedures and renewals.",
       },
       {
-        titleAr: "سكن/نقل عند الحاجة",
-        titleEn: "Housing/transport if needed",
-        descAr: "حلول سكن ونقل مريحة حسب الاتفاق.",
+        icon: "🏢",
+        titleAr: "سكن ونقل",
+        titleEn: "Housing & Transport",
+        descAr: "حلول سكن ونقل مريحة وآمنة حسب الاتفاق.",
         descEn: "Optional housing and transport solutions.",
       },
       {
-        titleAr: "استبدال/ضمان حسب الشروط",
-        titleEn: "Replacement options (terms apply)",
-        descAr: "خيارات استبدال ضمن شروط محددة.",
-        descEn: "Replacement options under specific terms.",
+        icon: "🤝",
+        titleAr: "استبدال وضمان",
+        titleEn: "Warranty & Replacement",
+        descAr: "خيارات استبدال مرنة ضمن شروط محددة.",
+        descEn: "Flexible replacement options under specific terms.",
       },
     ],
-    []
+    [],
   );
 
   async function submitRequest() {
     setSentMsg(null);
     setSending(true);
     try {
-      // حاليا: واجهة فقط (نربطه بباك-إند لاحقًا)
-      // لاحقًا سنعمل POST إلى /api/request
       await new Promise((r) => setTimeout(r, 500));
       setSentMsg(t.sentOk);
       setFullName("");
@@ -228,38 +232,51 @@ export default function HomePage() {
     }
   }
 
-  const goldBorder = "border border-yellow-600/40";
-  const goldText = "text-yellow-400";
-  const goldGlow = "shadow-[0_0_60px_rgba(234,179,8,0.12)]";
+  const goldBorder = "border border-[#D4AF37]/40";
+  const goldText = "text-[#FFD700]";
+  const goldGlow = "shadow-[0_0_25px_rgba(255,215,0,0.1)]";
+  const cardHoverMotion =
+    "transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_40px_rgba(255,215,0,0.15)] hover:border-[#FFD700]/70";
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* خلفية خطوط مائلة بسيطة */}
-      <div className="pointer-events-none fixed inset-0 opacity-20">
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_48%,rgba(234,179,8,0.35)_49%,transparent_50%,transparent_100%)] [background-size:22px_22px]" />
+    <div className="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden">
+      <div className="pointer-events-none fixed inset-0 opacity-40 z-0">
+        <div className="absolute -top-44 left-1/2 -translate-x-1/2 h-[520px] w-[520px] rounded-full bg-[#FFD700]/10 blur-3xl" />
+        <div className="absolute top-1/2 right-0 -translate-y-1/2 h-[400px] w-[400px] rounded-full bg-[#FFF4B0]/5 blur-3xl" />
       </div>
 
-      {/* Top bar */}
       <header className="relative z-10 px-4 py-4">
-        <div className={cx("mx-auto max-w-6xl rounded-2xl bg-white/5 backdrop-blur", goldBorder, goldGlow)}>
-          <div className="flex items-center justify-between px-4 py-3">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-yellow-500/10 flex items-center justify-center">
-                <span className={cx("font-bold", goldText)}>ZA</span>
+        <div
+          className={cx(
+            "mx-auto max-w-7xl rounded-2xl bg-black/60 backdrop-blur-xl",
+            goldBorder,
+            goldGlow,
+          )}
+        >
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[#8B7500] to-[#FFD700] flex items-center justify-center shadow-lg">
+                <span className="font-bold text-black text-xl">ZA</span>
               </div>
               <div className="leading-tight">
-                <div className={cx("font-semibold tracking-wide", goldText)}>{t.appName}</div>
-                <div className="text-xs text-white/60">{t.welcome}</div>
+                <div
+                  className={cx(
+                    "font-bold text-lg tracking-wide bg-gradient-to-r from-[#8B7500] via-[#FFD700] to-[#FFF4B0] bg-clip-text text-transparent",
+                  )}
+                >
+                  {t.appName}
+                </div>
+                <div className="text-xs text-white/60 mt-1">{t.welcome}</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => setLang((p) => (p === "ar" ? "en" : "ar"))}
                 className={cx(
-                  "rounded-xl px-3 py-2 text-sm",
+                  "rounded-xl px-4 py-2 text-sm font-medium transition-colors",
                   goldBorder,
-                  "bg-black/40 hover:bg-black/60"
+                  "bg-black/50 hover:bg-[#FFD700]/10 text-[#FFD700]",
                 )}
               >
                 {t.language}
@@ -269,400 +286,446 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Main */}
-      <main className="relative z-10 px-4 pb-10">
-        <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left / Media column */}
-          <section className="lg:col-span-5 space-y-6">
-            {/* Ads photos */}
-            <div className={cx("rounded-2xl overflow-hidden bg-white/5 backdrop-blur", goldBorder, goldGlow)}>
-              <div className="flex items-center justify-between px-4 py-3">
-                <div className={cx("font-semibold", goldText)}>{t.ads} — {t.photos}</div>
-                <div className="text-xs text-white/60">
-                  {photos.length ? `${photoIndex + 1}/${photos.length}` : "—"}
-                </div>
-              </div>
-              <div className="h-[320px] w-full bg-black/40">
-                {photos.length ? (
-                  <img
-                    src={photos[photoIndex]}
-                    className="w-full h-full object-cover"
-                    alt="ad"
-                  />
-                ) : (
-                  <div className="h-full flex items-center justify-center text-white/40 text-sm">
-                    No photos found in /public/ads/photo
-                  </div>
+      <main className="relative z-10 px-4 pb-24">
+        <div className="mx-auto max-w-7xl space-y-12">
+          <section
+            className={cx(
+              "relative overflow-hidden rounded-3xl p-8 md:p-12 bg-black/40 backdrop-blur-md text-center md:text-start flex flex-col md:flex-row items-center justify-between gap-8",
+              goldBorder,
+              goldGlow,
+            )}
+          >
+            <div className="flex-1 space-y-6">
+              <h1
+                className={cx(
+                  "text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight bg-gradient-to-r from-[#8B7500] via-[#FFD700] to-[#FFF4B0] bg-clip-text text-transparent",
                 )}
+              >
+                {t.appName}
+              </h1>
+              <p className="text-lg text-white/70 max-w-xl leading-relaxed">
+                {t.aboutText}
+              </p>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-4">
+                <button
+                  onClick={() => setOpenRequest(true)}
+                  className="rounded-xl px-8 py-4 font-bold text-black bg-gradient-to-r from-[#8B7500] via-[#FFD700] to-[#FFF4B0] hover:brightness-110 shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all hover:scale-105"
+                >
+                  {t.requestService}
+                </button>
+                {/* استبدال a بـ Link */}
+                <Link
+                  href="/login"
+                  className={cx(
+                    "rounded-xl px-8 py-4 font-bold transition-all hover:scale-105",
+                    goldBorder,
+                    goldText,
+                    "bg-black/40 hover:bg-[#FFD700]/10",
+                  )}
+                >
+                  {t.login}
+                </Link>
               </div>
             </div>
-
-            {/* Ads video */}
-            <div className={cx("rounded-2xl overflow-hidden bg-white/5 backdrop-blur", goldBorder, goldGlow)}>
-              <div className="flex items-center justify-between px-4 py-3">
-                <div className={cx("font-semibold", goldText)}>{t.ads} — {t.videos}</div>
-                <div className="text-xs text-white/60">
-                  {videos.length ? `${videoIndex + 1}/${videos.length}` : "—"}
-                </div>
-              </div>
-              <div className="h-[320px] w-full bg-black/40">
-                {videos.length ? (
-                  <video
-                    ref={videoRef}
-                    src={videos[videoIndex]}
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    muted
-                    playsInline
-                    onEnded={handleVideoEnd}
-                    controls
-                  />
-                ) : (
-                  <div className="h-full flex items-center justify-center text-white/40 text-sm">
-                    No videos found in /public/ads/video
-                  </div>
-                )}
+            <div className="hidden md:block w-1/3 h-64 rounded-2xl bg-gradient-to-br from-[#FFD700]/20 to-transparent border border-[#FFD700]/30 relative overflow-hidden">
+              <div className="absolute inset-0 flex items-center justify-center text-[#FFD700]/50 font-bold text-2xl">
+                ZUHOOR ALSHARQ
               </div>
             </div>
           </section>
 
-          {/* Right / Content column */}
-          <section className="lg:col-span-7 space-y-6">
-            {/* Hero */}
-            <div className={cx("rounded-2xl p-6 bg-white/5 backdrop-blur", goldBorder, goldGlow)}>
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="text-sm text-white/70">{t.welcome}</div>
-                  <h1 className={cx("mt-1 text-3xl md:text-4xl font-bold", goldText)}>
-                    {t.appName}
-                  </h1>
-                  <p className="mt-3 text-white/70 leading-relaxed">
-                    {t.aboutText}
-                  </p>
-                </div>
+          <section>
+            <div className="text-center mb-10">
+              <h2
+                className={cx(
+                  "text-3xl font-bold bg-gradient-to-r from-[#8B7500] via-[#FFD700] to-[#FFF4B0] bg-clip-text text-transparent inline-block mb-3",
+                )}
+              >
+                {t.services}
+              </h2>
+              <p className="text-white/60">{t.servicesHint}</p>
+            </div>
 
-                <button
-                  onClick={() => setLang((p) => (p === "ar" ? "en" : "ar"))}
-                  className={cx("rounded-xl px-3 py-2 text-xs", goldBorder, "bg-black/40 hover:bg-black/60")}
-                >
-                  {lang === "ar" ? "EN" : "AR"}
-                </button>
-              </div>
-
-              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-                <a
-                  href="/login"
-                  className={cx(
-                    "rounded-xl px-4 py-4 font-semibold text-black text-center",
-                    "bg-gradient-to-r from-yellow-700 via-yellow-400 to-yellow-700 hover:brightness-110 transition"
-                  )}
-                >
-                  {t.login}
-                </a>
-
-                <a
-                  href="/login"
-                  className={cx(
-                    "rounded-xl px-4 py-4 font-semibold text-center",
-                    goldBorder,
-                    goldText,
-                    "bg-black/40 hover:bg-black/60 transition"
-                  )}
-                >
-                  {t.register}
-                </a>
-              </div>
-
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                <button
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {servicesList.map((s, idx) => (
+                <div
+                  key={idx}
                   onClick={() => setOpenRequest(true)}
                   className={cx(
-                    "rounded-xl px-4 py-4 font-semibold text-center",
-                    "bg-white/10 hover:bg-white/15 transition",
-                    goldBorder
+                    "group cursor-pointer rounded-2xl p-6 bg-black/50 backdrop-blur-sm relative overflow-hidden",
+                    goldBorder,
+                    cardHoverMotion,
                   )}
                 >
-                  {t.requestService}
-                </button>
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#FFD700]/20 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="text-4xl mb-4">{s.icon}</div>
+                  <h3 className={cx("text-xl font-bold mb-2", goldText)}>
+                    {lang === "ar" ? s.titleAr : s.titleEn}
+                  </h3>
+                  <p className="text-sm text-white/60 leading-relaxed">
+                    {lang === "ar" ? s.descAr : s.descEn}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
 
-                <button
-                  onClick={() => setOpenPay(true)}
+          <section>
+            <div className="flex items-end justify-between mb-8 border-b border-[#D4AF37]/20 pb-4">
+              <div>
+                <h2
                   className={cx(
-                    "rounded-xl px-4 py-4 font-semibold text-center",
-                    "bg-white/10 hover:bg-white/15 transition",
-                    goldBorder
+                    "text-3xl font-bold bg-gradient-to-r from-[#8B7500] via-[#FFD700] to-[#FFF4B0] bg-clip-text text-transparent mb-2",
                   )}
                 >
-                  {t.payment}
-                </button>
+                  {t.workers}
+                </h2>
+                <p className="text-white/60">{t.workersHint}</p>
               </div>
+              <button
+                onClick={() => setOpenRequest(true)}
+                className={cx(
+                  "hidden sm:block text-sm font-semibold hover:underline",
+                  goldText,
+                )}
+              >
+                {t.more} ←
+              </button>
             </div>
 
-            {/* Services */}
-            <div className={cx("rounded-2xl p-6 bg-white/5 backdrop-blur", goldBorder, goldGlow)}>
-              <div className="flex items-center justify-between">
-                <h2 className={cx("text-xl font-bold", goldText)}>{t.services}</h2>
-                <span className="text-xs text-white/60">{t.servicesHint}</span>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {WORKERS.map((worker) => (
+                <div
+                  key={worker.id}
+                  className={cx(
+                    "rounded-2xl overflow-hidden bg-black/60 backdrop-blur-md flex flex-col group",
+                    goldBorder,
+                    cardHoverMotion,
+                  )}
+                >
+                  <div className="h-56 overflow-hidden relative">
+                    {/* استخدام Next/Image لحل تحذير LCP */}
+                    <Image
+                      src={worker.img}
+                      alt={worker.jobEn}
+                      width={400}
+                      height={300}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      unoptimized
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80" />
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col justify-center items-center text-center relative -mt-8 bg-black/80 rounded-t-2xl mx-2 mb-2 border border-[#D4AF37]/20 shadow-lg">
+                    <h3 className={cx("text-lg font-bold mb-1", goldText)}>
+                      {lang === "ar" ? worker.jobAr : worker.jobEn}
+                    </h3>
+                    <p className="text-sm text-white/70">
+                      <span className="text-[#FFD700]/60">{t.nationality}</span>
+                      {lang === "ar" ? worker.natAr : worker.natEn}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => setOpenRequest(true)}
+              className={cx(
+                "w-full mt-6 py-4 rounded-xl block sm:hidden text-center text-sm font-semibold border border-[#D4AF37]/30 bg-[#FFD700]/5",
+                goldText,
+              )}
+            >
+              {t.more}
+            </button>
+          </section>
 
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                {servicesList.map((s, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setOpenRequest(true)}
-                    className={cx(
-                      "rounded-xl p-4 text-left bg-black/35 hover:bg-black/50 transition",
-                      goldBorder
-                    )}
-                  >
-                    <div className={cx("font-semibold", goldText)}>
-                      {lang === "ar" ? s.titleAr : s.titleEn}
-                    </div>
-                    <div className="mt-1 text-sm text-white/70">
-                      {lang === "ar" ? s.descAr : s.descEn}
-                    </div>
-                  </button>
-                ))}
-              </div>
+          <section
+            className={cx(
+              "rounded-3xl p-8 bg-black/40 backdrop-blur-md border border-[#D4AF37]/30",
+              goldGlow,
+            )}
+          >
+            <div className="text-center mb-8">
+              <h2 className={cx("text-3xl font-bold mb-2", goldText)}>
+                {t.contact}
+              </h2>
             </div>
 
-            {/* Contact */}
-            <div className={cx("rounded-2xl p-6 bg-white/5 backdrop-blur", goldBorder, goldGlow)}>
-              <h2 className={cx("text-xl font-bold", goldText)}>{t.contact}</h2>
-
-              <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">
-                <a
-                  className={cx("rounded-xl p-3 text-center bg-black/35 hover:bg-black/50 transition", goldBorder)}
-                  href={`https://wa.me/${CONTACT.whatsappNumber}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {t.whatsapp}
-                </a>
-
-                <a
-                  className={cx("rounded-xl p-3 text-center bg-black/35 hover:bg-black/50 transition", goldBorder)}
-                  href={CONTACT.facebook}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {t.facebook}
-                </a>
-
-                <a
-                  className={cx("rounded-xl p-3 text-center bg-black/35 hover:bg-black/50 transition", goldBorder)}
-                  href={CONTACT.instagram}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {t.instagram}
-                </a>
-
-                <a
-                  className={cx("rounded-xl p-3 text-center bg-black/35 hover:bg-black/50 transition", goldBorder)}
-                  href={CONTACT.tiktok}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {t.tiktok}
-                </a>
-
-                <a
-                  className={cx("rounded-xl p-3 text-center bg-black/35 hover:bg-black/50 transition", goldBorder)}
-                  href={`mailto:${CONTACT.email}`}
-                >
-                  {t.email}
-                </a>
-
-                <a
-                  className={cx("rounded-xl p-3 text-center bg-black/35 hover:bg-black/50 transition", goldBorder)}
-                  href={`tel:${CONTACT.phoneNumber}`}
-                >
-                  {t.call}
-                </a>
-              </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <a
+                className={cx(
+                  "flex flex-col items-center justify-center p-4 rounded-2xl bg-black/50 hover:bg-[#FFD700]/10 transition-colors",
+                  goldBorder,
+                )}
+                href={`https://wa.me/${CONTACT.whatsappNumber}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span className="text-2xl mb-2">💬</span>
+                <span className={goldText}>{t.whatsapp}</span>
+              </a>
+              <a
+                className={cx(
+                  "flex flex-col items-center justify-center p-4 rounded-2xl bg-black/50 hover:bg-[#FFD700]/10 transition-colors",
+                  goldBorder,
+                )}
+                href={CONTACT.instagram}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span className="text-2xl mb-2">📸</span>
+                <span className={goldText}>{t.instagram}</span>
+              </a>
+              <a
+                className={cx(
+                  "flex flex-col items-center justify-center p-4 rounded-2xl bg-black/50 hover:bg-[#FFD700]/10 transition-colors",
+                  goldBorder,
+                )}
+                href={CONTACT.maps}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span className="text-2xl mb-2">📍</span>
+                <span className={goldText}>{t.maps}</span>
+              </a>
+              <a
+                className={cx(
+                  "flex flex-col items-center justify-center p-4 rounded-2xl bg-black/50 hover:bg-[#FFD700]/10 transition-colors",
+                  goldBorder,
+                )}
+                href={`tel:${CONTACT.phoneNumber}`}
+              >
+                <span className="text-2xl mb-2">📞</span>
+                <span className={goldText}>{t.call}</span>
+              </a>
             </div>
           </section>
         </div>
       </main>
 
-      {/* Bottom mobile nav (اختياري - يعطي شكل تطبيق) */}
-      <nav className={cx("fixed bottom-0 left-0 right-0 z-20 lg:hidden", "px-4 pb-4")}>
-        <div className={cx("mx-auto max-w-6xl rounded-2xl bg-black/60 backdrop-blur", goldBorder)}>
-          <div className="grid grid-cols-4 py-3 text-xs">
-            <a href="/" className="text-center text-white/80 hover:text-white">{t.home}</a>
-            <button onClick={() => setOpenRequest(true)} className="text-center text-white/80 hover:text-white">
+      <nav
+        className={cx("fixed bottom-0 left-0 right-0 z-40 lg:hidden px-4 pb-4")}
+      >
+        <div
+          className={cx(
+            "mx-auto rounded-2xl bg-black/90 backdrop-blur-xl border border-[#D4AF37]/50 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]",
+          )}
+        >
+          <div className="grid grid-cols-4 py-3 text-xs font-medium">
+            {/* استبدال a بـ Link */}
+            <Link
+              href="/"
+              className="flex flex-col items-center text-[#FFD700]"
+            >
+              <span className="text-lg">🏠</span>
+              {t.home}
+            </Link>
+            <button
+              onClick={() => setOpenRequest(true)}
+              className="flex flex-col items-center text-white/60 hover:text-[#FFD700] transition"
+            >
+              <span className="text-lg">📋</span>
               {t.navServices}
             </button>
-            <a href="/login" className="text-center text-white/80 hover:text-white">{t.profile}</a>
-            <a href={`tel:${CONTACT.phoneNumber}`} className="text-center text-white/80 hover:text-white">{t.call}</a>
+            {/* استبدال a بـ Link */}
+            <Link
+              href="/login"
+              className="flex flex-col items-center text-white/60 hover:text-[#FFD700] transition"
+            >
+              <span className="text-lg">👤</span>
+              {t.profile}
+            </Link>
+            <button
+              onClick={() => setOpenPay(true)}
+              className="flex flex-col items-center text-white/60 hover:text-[#FFD700] transition"
+            >
+              <span className="text-lg">💳</span>دفع
+            </button>
           </div>
         </div>
       </nav>
 
-      {/* ===== Request Modal ===== */}
       {openRequest && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70" onClick={() => setOpenRequest(false)} />
-          <div className={cx("relative w-full max-w-xl rounded-2xl p-6 bg-[#0b0b0b]", goldBorder, goldGlow)}>
-            <div className="flex items-start justify-between gap-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => setOpenRequest(false)}
+          />
+          <div
+            className={cx(
+              "relative w-full max-w-xl rounded-2xl p-6 bg-[#0a0a0a]",
+              goldBorder,
+              goldGlow,
+              "animate-in fade-in zoom-in duration-300",
+            )}
+          >
+            <div className="flex items-start justify-between mb-6">
               <div>
-                <div className={cx("text-lg font-bold", goldText)}>{t.requestService}</div>
-                <div className="text-sm text-white/60">{t.requestServiceDesc}</div>
+                <div className={cx("text-xl font-bold", goldText)}>
+                  {t.requestService}
+                </div>
+                <div className="text-sm text-white/60 mt-1">
+                  {t.requestServiceDesc}
+                </div>
               </div>
               <button
-                className={cx("rounded-xl px-3 py-2 text-sm", goldBorder, "bg-black/40 hover:bg-black/60")}
+                className={cx(
+                  "rounded-lg px-3 py-1 text-sm bg-[#FFD700]/10 hover:bg-[#FFD700]/20 transition",
+                  goldText,
+                )}
                 onClick={() => setOpenRequest(false)}
               >
-                {t.close}
+                ✕
               </button>
             </div>
 
-            <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-white/70 mb-1">{t.serviceType}</label>
+                <label className="block text-xs text-[#FFD700]/80 mb-1 ml-1">
+                  {t.serviceType}
+                </label>
                 <select
                   value={serviceType}
-                  onChange={(e) => setServiceType(e.target.value as ServiceType)}
-                  className={cx("w-full rounded-xl px-3 py-3 bg-black/40 text-white outline-none", goldBorder)}
+                  onChange={(e) =>
+                    setServiceType(e.target.value as ServiceType)
+                  }
+                  className={cx(
+                    "w-full rounded-xl px-4 py-3 bg-black/50 text-white outline-none focus:ring-2 focus:ring-[#FFD700]/30 transition",
+                    goldBorder,
+                  )}
                 >
                   <option value="recruitment">{t.recruitment}</option>
                   <option value="housemaid">{t.housemaid}</option>
                   <option value="general">{t.general}</option>
                 </select>
               </div>
-
               <div>
-                <label className="block text-xs text-white/70 mb-1">{t.city}</label>
+                <label className="block text-xs text-[#FFD700]/80 mb-1 ml-1">
+                  {t.city}
+                </label>
                 <input
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className={cx("w-full rounded-xl px-3 py-3 bg-black/40 text-white outline-none", goldBorder)}
-                  placeholder={lang === "ar" ? "بغداد / أربيل ..." : "Baghdad / Erbil ..."}
+                  className={cx(
+                    "w-full rounded-xl px-4 py-3 bg-black/50 text-white outline-none focus:ring-2 focus:ring-[#FFD700]/30 transition",
+                    goldBorder,
+                  )}
+                  placeholder={
+                    lang === "ar" ? "بغداد / أربيل ..." : "Baghdad / Erbil ..."
+                  }
                 />
               </div>
-
               <div>
-                <label className="block text-xs text-white/70 mb-1">{t.fullName}</label>
+                <label className="block text-xs text-[#FFD700]/80 mb-1 ml-1">
+                  {t.fullName}
+                </label>
                 <input
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className={cx("w-full rounded-xl px-3 py-3 bg-black/40 text-white outline-none", goldBorder)}
-                  placeholder={lang === "ar" ? "اكتب اسمك" : "Your name"}
+                  className={cx(
+                    "w-full rounded-xl px-4 py-3 bg-black/50 text-white outline-none focus:ring-2 focus:ring-[#FFD700]/30 transition",
+                    goldBorder,
+                  )}
+                  placeholder={lang === "ar" ? "الاسم الثلاثي" : "Full Name"}
                 />
               </div>
-
               <div>
-                <label className="block text-xs text-white/70 mb-1">{t.phone}</label>
+                <label className="block text-xs text-[#FFD700]/80 mb-1 ml-1">
+                  {t.phone}
+                </label>
                 <input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className={cx("w-full rounded-xl px-3 py-3 bg-black/40 text-white outline-none", goldBorder)}
-                  placeholder={lang === "ar" ? "07xx..." : "+964..."}
+                  className={cx(
+                    "w-full rounded-xl px-4 py-3 bg-black/50 text-white outline-none focus:ring-2 focus:ring-[#FFD700]/30 transition",
+                    goldBorder,
+                  )}
+                  placeholder="07XX XXX XXXX"
                 />
               </div>
-
               <div className="md:col-span-2">
-                <label className="block text-xs text-white/70 mb-1">{t.details}</label>
+                <label className="block text-xs text-[#FFD700]/80 mb-1 ml-1">
+                  {t.details}
+                </label>
                 <textarea
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
-                  rows={4}
-                  className={cx("w-full rounded-xl px-3 py-3 bg-black/40 text-white outline-none", goldBorder)}
+                  rows={3}
+                  className={cx(
+                    "w-full rounded-xl px-4 py-3 bg-black/50 text-white outline-none focus:ring-2 focus:ring-[#FFD700]/30 transition resize-none",
+                    goldBorder,
+                  )}
                   placeholder={
                     lang === "ar"
-                      ? "مثال: جنسية العامل، العدد، نوع العمل، مدة العقد..."
-                      : "Example: nationality, count, role, contract duration..."
+                      ? "اكتب تفاصيل طلبك هنا..."
+                      : "Write your request details here..."
                   }
                 />
               </div>
             </div>
 
             {sentMsg && (
-              <div className="mt-4 rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-200">
+              <div className="mt-4 rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-200 text-center">
                 {sentMsg}
               </div>
             )}
 
-            <div className="mt-5 flex flex-col md:flex-row gap-3">
-              <button
-                disabled={sending}
-                onClick={submitRequest}
-                className={cx(
-                  "w-full rounded-xl px-4 py-3 font-semibold text-black",
-                  "bg-gradient-to-r from-yellow-700 via-yellow-400 to-yellow-700 hover:brightness-110 transition",
-                  sending && "opacity-60 cursor-not-allowed"
-                )}
-              >
-                {sending ? t.sending : t.submit}
-              </button>
-
-              <a
-                className={cx("w-full rounded-xl px-4 py-3 font-semibold text-center", goldBorder, "bg-black/40 hover:bg-black/60")}
-                href={`https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
-                  lang === "ar"
-                    ? "مرحباً، أريد تقديم طلب خدمة."
-                    : "Hello, I want to request a service."
-                )}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {t.whatsapp}
-              </a>
-            </div>
+            <button
+              disabled={sending}
+              onClick={submitRequest}
+              className={cx(
+                "w-full mt-6 rounded-xl px-4 py-4 font-bold text-black bg-gradient-to-r from-[#8B7500] via-[#FFD700] to-[#FFF4B0] hover:brightness-110 transition-all",
+                sending && "opacity-60 cursor-not-allowed",
+              )}
+            >
+              {sending ? t.sending : t.submit}
+            </button>
           </div>
         </div>
       )}
 
-      {/* ===== Payment Modal ===== */}
       {openPay && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70" onClick={() => setOpenPay(false)} />
-          <div className={cx("relative w-full max-w-lg rounded-2xl p-6 bg-[#0b0b0b]", goldBorder, goldGlow)}>
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <div className={cx("text-lg font-bold", goldText)}>{t.payment}</div>
-                <div className="text-sm text-white/60">{t.payHint}</div>
-              </div>
-              <button
-                className={cx("rounded-xl px-3 py-2 text-sm", goldBorder, "bg-black/40 hover:bg-black/60")}
-                onClick={() => setOpenPay(false)}
-              >
-                {t.close}
-              </button>
-            </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => setOpenPay(false)}
+          />
+          <div
+            className={cx(
+              "relative w-full max-w-sm rounded-2xl p-6 bg-[#0a0a0a] text-center",
+              goldBorder,
+              goldGlow,
+              "animate-in fade-in zoom-in duration-300",
+            )}
+          >
+            <h3 className={cx("text-xl font-bold mb-2", goldText)}>
+              {t.payment}
+            </h3>
+            <p className="text-sm text-white/60 mb-6">{t.payHint}</p>
 
-            <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3">
-              <a
-                href={CONTACT.kcardPayLink}
-                target="_blank"
-                rel="noreferrer"
-                className={cx(
-                  "rounded-xl p-4 text-center font-semibold text-black",
-                  "bg-gradient-to-r from-yellow-700 via-yellow-400 to-yellow-700 hover:brightness-110 transition"
-                )}
-              >
-                {t.kcard} — {t.open}
-              </a>
-
+            <div className="space-y-3">
               <a
                 href={CONTACT.zaincashPayLink}
                 target="_blank"
                 rel="noreferrer"
-                className={cx(
-                  "rounded-xl p-4 text-center font-semibold",
-                  goldBorder,
-                  goldText,
-                  "bg-black/40 hover:bg-black/60 transition"
-                )}
+                className="block w-full rounded-xl py-3 font-bold bg-[#FFD700]/10 border border-[#FFD700]/40 text-[#FFD700] hover:bg-[#FFD700]/20 transition"
               >
-                {t.zaincash} — {t.open}
+                {t.zaincash}
+              </a>
+              <a
+                href={CONTACT.kcardPayLink}
+                target="_blank"
+                rel="noreferrer"
+                className="block w-full rounded-xl py-3 font-bold text-black bg-gradient-to-r from-[#8B7500] via-[#FFD700] to-[#FFF4B0] hover:brightness-110 transition"
+              >
+                {t.kcard}
               </a>
             </div>
-
-            <div className="mt-4 text-xs text-white/50">
-              * لاحقًا نضيف صفحة دفع حقيقية + توليد فاتورة + تأكيد عملية الدفع.
-            </div>
+            <button
+              className="mt-6 text-sm text-white/50 hover:text-white"
+              onClick={() => setOpenPay(false)}
+            >
+              {t.close}
+            </button>
           </div>
         </div>
       )}
