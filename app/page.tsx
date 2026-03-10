@@ -3,10 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+// استيرادFramers Motion للحركات المعقدة
+import { motion, AnimatePresence } from "framer-motion";
 
 type Lang = "ar" | "en";
 type ServiceType = "recruitment" | "housemaid" | "general";
 
+// تم استبدال any بـ Record<string, string> لحل مشكلة Typescript
 const TEXT: Record<Lang, Record<string, string>> = {
   ar: {
     dir: "rtl",
@@ -184,6 +187,7 @@ export default function HomePage() {
   const [sentMsg, setSentMsg] = useState<string | null>(null);
 
   // ===== Dynamic Media State (Photos & Videos from public folder) =====
+  // تمت إعادة كود جلب الصور التلقائي هنا
   const [photos, setPhotos] = useState<string[]>([]);
   const [videos, setVideos] = useState<string[]>([]);
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -283,6 +287,25 @@ export default function HomePage() {
   const goldGlow = "shadow-[0_0_25px_rgba(255,215,0,0.1)]";
   const cardHoverMotion =
     "transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_40px_rgba(255,215,0,0.15)] hover:border-[#FFD700]/70";
+
+  // Framer Motion Animation Settings
+  const titleAnim = {
+    hidden: { opacity: 0, x: t.dir === "rtl" ? 100 : -100 }, // دخول من اليمين في العربي
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 1, ease: [0.6, 0.05, -0.01, 0.9] },
+    },
+  };
+
+  const logoAnim = {
+    hidden: { opacity: 0, scale: 0.5 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 1, delay: 1, ease: [0.6, 0.05, -0.01, 0.9] }, // تأخير بعد العنوان
+    },
+  };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden relative">
@@ -390,7 +413,7 @@ export default function HomePage() {
 
       <main className="relative z-10 px-4 pb-24">
         <div className="mx-auto max-w-7xl space-y-12">
-          {/* Hero Section */}
+          {/* Hero Section with Animation */}
           <section
             className={cx(
               "relative overflow-hidden rounded-3xl p-8 md:p-12 bg-black/40 backdrop-blur-md text-center md:text-start flex flex-col md:flex-row items-center justify-between gap-8",
@@ -399,13 +422,22 @@ export default function HomePage() {
             )}
           >
             <div className="flex-1 space-y-6">
-              <h1
+              {/* العنوان مع حركة الدخول واللمعان */}
+              <motion.h1
+                variants={titleAnim}
+                initial="hidden"
+                animate="visible"
                 className={cx(
-                  "text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight bg-gradient-to-r from-[#8B7500] via-[#FFD700] to-[#FFF4B0] bg-clip-text text-transparent",
+                  "relative text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight inline-block",
                 )}
               >
-                {t.appName}
-              </h1>
+                <span className="bg-gradient-to-r from-[#8B7500] via-[#FFD700] to-[#FFF4B0] bg-clip-text text-transparent">
+                  {t.appName}
+                </span>
+                {/* تأثير لمعان ضوء CSS */}
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 [mask-image:linear-gradient(110deg,#000_10%,transparent_10%,transparent_90%,#000_90%)] transition-transform duration-1000 -translate-x-full hover:translate-x-full" />
+              </motion.h1>
+
               <p className="text-lg text-white/70 max-w-xl leading-relaxed">
                 {t.aboutText}
               </p>
@@ -429,11 +461,18 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-            <div className="hidden md:block w-1/3 h-64 rounded-2xl bg-gradient-to-br from-[#FFD700]/20 to-transparent border border-[#FFD700]/30 relative overflow-hidden">
+
+            {/* مربع الشعار مع حركة الدخول المتتابعة */}
+            <motion.div
+              variants={logoAnim}
+              initial="hidden"
+              animate="visible"
+              className="hidden md:block w-1/3 h-64 rounded-2xl bg-gradient-to-br from-[#FFD700]/20 to-transparent border border-[#FFD700]/30 relative overflow-hidden"
+            >
               <div className="absolute inset-0 flex items-center justify-center text-[#FFD700]/50 font-bold text-2xl">
                 ZUHOOR ALSHARQ
               </div>
-            </div>
+            </motion.div>
           </section>
 
           {/* Dynamic Media Section (الإعلانات - Photos & Videos) */}
@@ -516,7 +555,7 @@ export default function HomePage() {
             </section>
           )}
 
-          {/* Services Cards (اختصار للخدمات في الرئيسية) */}
+          {/* Services Cards */}
           <section>
             <div className="text-center mb-10">
               <h2
